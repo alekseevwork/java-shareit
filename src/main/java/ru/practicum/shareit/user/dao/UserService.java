@@ -1,0 +1,16 @@
+package ru.practicum.shareit.user.dao;
+
+import ru.practicum.shareit.user.User;
+
+import java.util.Collection;
+import java.util.Optional;
+
+public interface UserService {
+
+    User create(User user) ;
+    Collection<User> findAll();
+    Optional<User> findUserById(Long userId);
+    User update(User user, Long userId);
+    void delete(Long userId);
+    void isEmailExist(String email);
+}
