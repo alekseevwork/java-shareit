@@ -1,20 +1,27 @@
 package ru.practicum.shareit.item.dao;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.exeption.NotFoundException;
-import ru.practicum.shareit.exeption.ValidationException;
+import ru.practicum.shareit.error.exeption.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.dao.UserRepository;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Optional;
 
 @Repository("itemRepositoryMemory")
-@RequiredArgsConstructor
 public class ItemRepositoryMemory implements ItemRepository {
+
     HashMap<Long, Item> items = new HashMap<>();
     Long id = 1L;
+
+    UserRepository userRepository;
+
+    public ItemRepositoryMemory(@Qualifier("userRepositoryMemory") UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public Optional<Item> getItemsById(Long itemId) {
@@ -29,17 +36,22 @@ public class ItemRepositoryMemory implements ItemRepository {
 
     @Override
     public Collection<Item> getItemsByText(String text) {
-        if (text == null) {
-            throw new ValidationException("Text searching cannot  by null");
+        if (text == null || text.isBlank()) {
+            return Collections.emptyList();
         }
         return items.values().stream()
                 .filter(Item::isAvailable)
-                .filter(item -> item.getName().contains(text) || item.getDescription().contains(text))
+                .filter(item -> item.getName().toLowerCase().contains(text)
+                        || item.getDescription().contains(text))
                 .toList();
     }
 
     @Override
     public Item create(Long userId, Item item) {
+        if (userRepository.findUserById(userId).isEmpty()) {
+            throw new NotFoundException("User by id - " + userId + " not found");
+        }
+
         item.setOwner(userId);
         item.setId(id++);
         items.put(item.getId(), item);
@@ -49,15 +61,21 @@ public class ItemRepositoryMemory implements ItemRepository {
     @Override
     public Item update(Long userId, Long itemId, Item item) {
         if (!items.containsKey(itemId)) {
-            throw  new NotFoundException("Item by id - " + itemId + " not found.");
+            throw new NotFoundException("Item by id - " + itemId + " not found.");
         }
         Item oldItem = items.get(itemId);
         if (!oldItem.getOwner().equals(userId)) {
-            throw new ValidationException("User by id - " + userId + " not owner this item.");
+            throw new NotFoundException("User by id - " + userId + " not owner this item.");
         }
-        oldItem.setName(item.getName());
-        oldItem.setDescription(item.getDescription());
-        oldItem.setAvailable(item.isAvailable());
+        if (item.getName() != null) {
+            oldItem.setName(item.getName());
+        }
+        if (item.getDescription() != null) {
+            oldItem.setDescription(item.getDescription());
+        }
+        if (item.getAvailable() != null) {
+            oldItem.setAvailable(item.getAvailable());
+        }
         items.put(itemId, oldItem);
         return oldItem;
     }

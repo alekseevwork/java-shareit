@@ -28,26 +28,35 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     public ItemDto getItemsById(@PathVariable Long itemId) {
+        log.info("GET /items/id: getItemsById by id - {}", itemId);
         return itemService.getItemsById(itemId);
     }
 
     @GetMapping
     public Collection<ItemDto> getItemsByUser(@RequestHeader("X-Sharer-User-Id") Long userId) {
+        log.info("GET /items: getItemsByUser by user id - {}", userId);
         return itemService.getItemsByUser(userId);
     }
 
     @GetMapping("/search")
     public Collection<ItemDto> getItemsByText(@RequestParam String text) {
+        log.info("GET /items/search: getItemsByText by text - {}", text);
         return itemService.getItemsByText(text);
     }
 
     @PostMapping
     public ItemDto create(@RequestHeader("X-Sharer-User-Id") Long userId, @Validated @RequestBody Item item){
+        log.info("POST /items: create items {} - where owner {}", item, userId);
         return itemService.create(userId, item);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto update(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId, @RequestBody Item item) {
+    public ItemDto update(
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @PathVariable Long itemId,
+            @RequestBody Item item) {
+        System.out.println(item);
+        log.info("PATCH /items/id: update item by id - {}, by owner id - {}", itemId, userId);
         return itemService.update(userId, itemId, item);
     }
 }

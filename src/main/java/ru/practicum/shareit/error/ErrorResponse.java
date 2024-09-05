@@ -1,4 +1,4 @@
-package ru.practicum.shareit.exeption;
+package ru.practicum.shareit.error;
 
 public record ErrorResponse(String error) {
 }

@@ -1,9 +1,8 @@
 package ru.practicum.shareit.item.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exeption.NotFoundException;
+import ru.practicum.shareit.error.exeption.NotFoundException;
 import ru.practicum.shareit.item.dao.ItemRepository;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
@@ -35,7 +34,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Collection<ItemDto> getItemsByText(String text) {
-        return itemRepository.getItemsByText(text).stream()
+        return itemRepository.getItemsByText(text.toLowerCase()).stream()
                 .map(ItemMapper::toItemDto).toList();
     }
 

@@ -1,10 +1,13 @@
-package ru.practicum.shareit.exeption;
+package ru.practicum.shareit.error;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.shareit.error.exeption.DuplicatedMailException;
+import ru.practicum.shareit.error.exeption.NotFoundException;
+import ru.practicum.shareit.error.exeption.ValidationException;
 
 @RestControllerAdvice
 public class ErrorHandler {
@@ -26,6 +29,7 @@ public class ErrorHandler {
     public ErrorResponse handleDuplicatedMail(final DuplicatedMailException e) {
         return new ErrorResponse(e.getMessage());
     }
+
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)

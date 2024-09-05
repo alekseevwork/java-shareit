@@ -3,8 +3,8 @@ package ru.practicum.shareit.user.dao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exeption.DuplicatedMailException;
-import ru.practicum.shareit.exeption.NotFoundException;
+import ru.practicum.shareit.error.exeption.DuplicatedMailException;
+import ru.practicum.shareit.error.exeption.NotFoundException;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.Collection;
@@ -35,7 +35,10 @@ public class UserRepositoryMemory implements UserRepository {
 
     @Override
     public Optional<User> findUserById(Long userId) {
-        return Optional.of(userMap.get(userId));
+//        if (userMap.containsKey(userId)) {
+//            return Optional.of(userMap.get(userId));
+//        }
+        return Optional.ofNullable(userMap.get(userId));
     }
 
     @Override
