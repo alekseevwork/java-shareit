@@ -1,11 +1,11 @@
 package ru.practicum.shareit.user.dao;
 
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.Collection;
 import java.util.Optional;
 
-public interface UserService {
+public interface UserRepository {
 
     User create(User user) ;
     Collection<User> findAll();

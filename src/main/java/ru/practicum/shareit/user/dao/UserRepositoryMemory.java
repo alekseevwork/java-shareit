@@ -2,30 +2,28 @@ package ru.practicum.shareit.user.dao;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exeption.DuplicatedMailException;
-import ru.practicum.shareit.exeption.ValidationException;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.exeption.NotFoundException;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Optional;
 
 @Slf4j
-@Service
+@Service("userRepositoryMemory")
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class UserRepositoryMemory implements UserRepository {
+
     HashMap<Long, User> userMap = new HashMap<>();
     Long id = 1L;
 
     @Override
     public User create(User user) {
         user.setId(id++);
+        log.info("create user - {}", user);
         isEmailExist(user.getEmail());
-        if (user.getName().isBlank() || user.getEmail().isBlank()) {
-            throw new ValidationException("Name is null!");
-        }
         userMap.put(user.getId(), user);
         return user;
     }
@@ -42,12 +40,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User update(User userUpd, Long userId) {
-        userUpd.setId(userId);
-        if (userMap.values().stream().anyMatch(user -> user.getEmail().equals(userUpd.getEmail()))) {
-            throw new DuplicatedMailException("");
+        if (!userMap.containsKey(userId) || userId == null) {
+            log.debug("Not user by id - {}", userId);
+            throw new NotFoundException("User by id - " + userId + " not found");
         }
-        userMap.put(userId, userUpd);
-        return userUpd;
+        User user = findUserById(userId)
+                .orElseThrow(() -> new NotFoundException("User by id: " + userId + " not found"));
+        if (userUpd.getName() != null) {
+            user.setName(userUpd.getName());
+        }
+        if (userUpd.getEmail() != null) {
+            isEmailExist(userUpd.getEmail());
+            user.setEmail(userUpd.getEmail());
+        }
+        userMap.put(userId, user);
+        log.info("update user - {}", user);
+        return user;
     }
 
     @Override

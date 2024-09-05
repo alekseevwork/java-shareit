@@ -1,18 +1,21 @@
 package ru.practicum.shareit.item.model;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import ru.practicum.shareit.request.ItemRequest;
-import ru.practicum.shareit.user.User;
 
-/**
- * TODO Sprint add-controllers.
- */
+
 @Data
 public class Item {
+
     long id;
+    @NotBlank
     String name;
+    @NotBlank
     String description;
+    @NotNull
     boolean available;
-    User owner;
+    Long owner;
     ItemRequest request;
 }
