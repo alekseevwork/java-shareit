@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.dto.ItemShortDto;
 import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.Collection;
@@ -28,24 +28,24 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     public ItemDto getItemsById(@PathVariable Long itemId) {
-        log.info("GET /items/id: getItemsById by id - {}", itemId);
+        log.info("GET /items/itemId: getItemsById - {}", itemId);
         return itemService.getItemsById(itemId);
     }
 
     @GetMapping
-    public Collection<ItemDto> getItemsByUser(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public Collection<ItemShortDto> getItemsByUser(@RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("GET /items: getItemsByUser by user id - {}", userId);
         return itemService.getItemsByUser(userId);
     }
 
     @GetMapping("/search")
     public Collection<ItemDto> getItemsByText(@RequestParam String text) {
-        log.info("GET /items/search: getItemsByText by text - {}", text);
+        log.info("GET /items/search: getItemsByText - {}", text);
         return itemService.getItemsByText(text);
     }
 
     @PostMapping
-    public ItemDto create(@RequestHeader("X-Sharer-User-Id") Long userId, @Validated @RequestBody Item item){
+    public ItemDto create(@RequestHeader("X-Sharer-User-Id") Long userId, @Validated @RequestBody ItemDto item) {
         log.info("POST /items: create items {} - where owner {}", item, userId);
         return itemService.create(userId, item);
     }
@@ -54,8 +54,7 @@ public class ItemController {
     public ItemDto update(
             @RequestHeader("X-Sharer-User-Id") Long userId,
             @PathVariable Long itemId,
-            @RequestBody Item item) {
-        System.out.println(item);
+            @RequestBody ItemDto item) {
         log.info("PATCH /items/id: update item by id - {}, by owner id - {}", itemId, userId);
         return itemService.update(userId, itemId, item);
     }

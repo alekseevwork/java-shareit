@@ -21,8 +21,8 @@ public class UserRepositoryMemory implements UserRepository {
 
     @Override
     public User create(User user) {
+        log.info("created user - {}", user);
         user.setId(id++);
-        log.info("create user - {}", user);
         isEmailExist(user.getEmail());
         userMap.put(user.getId(), user);
         return user;
@@ -35,9 +35,6 @@ public class UserRepositoryMemory implements UserRepository {
 
     @Override
     public Optional<User> findUserById(Long userId) {
-//        if (userMap.containsKey(userId)) {
-//            return Optional.of(userMap.get(userId));
-//        }
         return Optional.ofNullable(userMap.get(userId));
     }
 
@@ -63,12 +60,15 @@ public class UserRepositoryMemory implements UserRepository {
 
     @Override
     public void delete(Long userId) {
+        log.info("Delete user by id {}", userId);
         userMap.remove(userId);
     }
 
     @Override
     public void isEmailExist(String email) {
-        if (userMap.values().stream().filter(user -> user.getEmail().equals(email)).count() == 1)
+        if (userMap.values().stream().filter(user -> user.getEmail().equals(email)).count() == 1) {
+            log.debug("Email {} is already exist", email);
             throw new DuplicatedMailException("Email " + email + " is already exist");
+        }
     }
 }

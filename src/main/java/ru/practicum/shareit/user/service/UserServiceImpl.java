@@ -11,7 +11,7 @@ import ru.practicum.shareit.user.model.User;
 import java.util.Collection;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     UserRepository repository;
 
@@ -19,24 +19,26 @@ public class UserServiceImpl implements UserService{
         this.repository = repository;
     }
 
-    public UserDto create(User user) {
-        return UserMapper.toUserDto(repository.create(user));
+    public UserDto create(UserDto user) {
+        User newUser = UserMapper.mapToUser(user);
+        return UserMapper.mapToUserDto(repository.create(newUser));
     }
 
     public Collection<UserDto> findAll() {
         return repository.findAll().stream()
-                .map(UserMapper::toUserDto)
+                .map(UserMapper::mapToUserDto)
                 .toList();
     }
 
     public UserDto findUserById(Long userId) {
         return repository.findUserById(userId)
-                .map(UserMapper::toUserDto)
+                .map(UserMapper::mapToUserDto)
                 .orElseThrow(() -> new NotFoundException("User by id: " + userId + " not found"));
     }
 
-    public UserDto update(User user, Long userId) {
-        return UserMapper.toUserDto(repository.update(user, userId));
+    public UserDto update(UserDto user, Long userId) {
+        User updUser = UserMapper.mapToUser(user);
+        return UserMapper.mapToUserDto(repository.update(updUser, userId));
     }
 
     public void delete(Long userId) {

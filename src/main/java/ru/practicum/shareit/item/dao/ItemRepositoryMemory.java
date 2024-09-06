@@ -40,7 +40,7 @@ public class ItemRepositoryMemory implements ItemRepository {
             return Collections.emptyList();
         }
         return items.values().stream()
-                .filter(Item::isAvailable)
+                .filter(Item::getAvailable)
                 .filter(item -> item.getName().toLowerCase().contains(text)
                         || item.getDescription().contains(text))
                 .toList();
