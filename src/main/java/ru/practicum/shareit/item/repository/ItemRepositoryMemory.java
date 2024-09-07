@@ -1,10 +1,10 @@
-package ru.practicum.shareit.item.dao;
+package ru.practicum.shareit.item.repository;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.error.exeption.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.dao.UserRepository;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -29,7 +29,7 @@ public class ItemRepositoryMemory implements ItemRepository {
     }
 
     @Override
-    public Collection<Item> getItemsByUser(Long userId) {
+    public Collection<Item> getItemsByUserId(Long userId) {
         return items.values().stream()
                 .filter(item -> item.getOwner().equals(userId)).toList();
     }
@@ -48,9 +48,7 @@ public class ItemRepositoryMemory implements ItemRepository {
 
     @Override
     public Item create(Long userId, Item item) {
-        if (userRepository.findUserById(userId).isEmpty()) {
-            throw new NotFoundException("User by id - " + userId + " not found");
-        }
+        isUserExist(userId);
 
         item.setOwner(userId);
         item.setId(id++);
@@ -78,5 +76,11 @@ public class ItemRepositoryMemory implements ItemRepository {
         }
         items.put(itemId, oldItem);
         return oldItem;
+    }
+
+    public void isUserExist(Long userId) {
+        if (userRepository.findUserById(userId).isEmpty()) {
+            throw new NotFoundException("User by id - " + userId + " not found");
+        }
     }
 }

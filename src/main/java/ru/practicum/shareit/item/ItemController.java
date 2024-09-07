@@ -33,9 +33,9 @@ public class ItemController {
     }
 
     @GetMapping
-    public Collection<ItemShortDto> getItemsByUser(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        log.info("GET /items: getItemsByUser by user id - {}", userId);
-        return itemService.getItemsByUser(userId);
+    public Collection<ItemShortDto> getItemsByUserId(@RequestHeader("X-Sharer-User-Id") Long userId) {
+        log.info("GET /items: getItemsByUserId by user id - {}", userId);
+        return itemService.getItemsByUserId(userId);
     }
 
     @GetMapping("/search")

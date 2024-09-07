@@ -3,11 +3,15 @@ package ru.practicum.shareit.item.dto;
 import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.item.model.Item;
 
+import java.util.Collection;
+
 @UtilityClass
 public class ItemMapper {
 
-    public static ItemDto mapToItemDto(Item item) {
-
+    public static ItemDto toDto(Item item) {
+        if (item == null) {
+            return null;
+        }
         return ItemDto.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -16,8 +20,10 @@ public class ItemMapper {
                 .build();
     }
 
-    public static Item mapToItem(ItemDto itemDto) {
-
+    public static Item toItem(ItemDto itemDto) {
+        if (itemDto == null) {
+            return null;
+        }
         return Item.builder()
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
@@ -25,11 +31,19 @@ public class ItemMapper {
                 .build();
     }
 
-    public static ItemShortDto mapToItemShortDto(Item item) {
-
+    public static ItemShortDto toShortDto(Item item) {
+        if (item == null) {
+            return null;
+        }
         return ItemShortDto.builder()
                 .name(item.getName())
                 .description(item.getDescription())
                 .build();
+    }
+
+    public static Collection<ItemShortDto> toShortDto(Collection<Item> items) {
+        return items.stream()
+                .map(ItemMapper::toShortDto)
+                .toList();
     }
 }

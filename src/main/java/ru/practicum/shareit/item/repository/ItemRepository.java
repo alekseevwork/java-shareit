@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item.dao;
+package ru.practicum.shareit.item.repository;
 
 import ru.practicum.shareit.item.model.Item;
 
@@ -9,7 +9,7 @@ public interface ItemRepository {
 
     Optional<Item> getItemsById(Long itemId);
 
-    Collection<Item> getItemsByUser(Long userId);
+    Collection<Item> getItemsByUserId(Long userId);
 
     Collection<Item> getItemsByText(String text);
 

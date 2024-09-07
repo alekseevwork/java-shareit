@@ -9,7 +9,7 @@ public interface ItemService {
 
     ItemDto getItemsById(Long itemId);
 
-    Collection<ItemShortDto> getItemsByUser(Long userId);
+    Collection<ItemShortDto> getItemsByUserId(Long userId);
 
     Collection<ItemDto> getItemsByText(String text);
 
