@@ -9,12 +9,13 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
-@Repository("itemRepositoryMemory")
+@Repository
 public class ItemRepositoryMemory implements ItemRepository {
 
-    HashMap<Long, Item> items = new HashMap<>();
+    Map<Long, Item> items = new HashMap<>();
     Long id = 1L;
 
     UserRepository userRepository;
