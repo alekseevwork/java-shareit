@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.service;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.error.exeption.NotFoundException;
 import ru.practicum.shareit.item.repository.ItemRepository;
