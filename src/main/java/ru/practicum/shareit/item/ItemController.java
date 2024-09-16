@@ -1,7 +1,7 @@
 package ru.practicum.shareit.item;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -20,11 +20,14 @@ import java.util.Collection;
 
 @Slf4j
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/items")
 public class ItemController {
 
     private final ItemService itemService;
+
+    public ItemController(@Qualifier("itemServiceDb") ItemService itemService) {
+        this.itemService = itemService;
+    }
 
     @GetMapping("/{itemId}")
     public ItemDto getItemsById(@PathVariable Long itemId) {

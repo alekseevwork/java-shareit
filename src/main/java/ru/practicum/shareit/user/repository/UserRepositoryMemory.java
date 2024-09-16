@@ -1,74 +1,21 @@
 package ru.practicum.shareit.user.repository;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import ru.practicum.shareit.error.exeption.DuplicatedMailException;
-import ru.practicum.shareit.error.exeption.NotFoundException;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Optional;
 
-@Slf4j
-@Service("userRepositoryMemory")
-@RequiredArgsConstructor
-public class UserRepositoryMemory implements UserRepository {
+public interface UserRepositoryMemory {
 
-    HashMap<Long, User> userMap = new HashMap<>();
-    Long id = 1L;
+    User create(User user);
 
-    @Override
-    public User create(User user) {
-        log.info("created user - {}", user);
-        user.setId(id++);
-        isEmailExist(user.getEmail());
-        userMap.put(user.getId(), user);
-        return user;
-    }
+    Collection<User> findAll();
 
-    @Override
-    public Collection<User> findAll() {
-        return userMap.values();
-    }
+    Optional<User> findUserById(Long userId);
 
-    @Override
-    public Optional<User> findUserById(Long userId) {
-        return Optional.ofNullable(userMap.get(userId));
-    }
+    User update(User user, Long userId);
 
-    @Override
-    public User update(User userUpd, Long userId) {
-        if (!userMap.containsKey(userId) || userId == null) {
-            log.debug("Not user by id - {}", userId);
-            throw new NotFoundException("User by id - " + userId + " not found");
-        }
-        User user = findUserById(userId)
-                .orElseThrow(() -> new NotFoundException("User by id: " + userId + " not found"));
-        if (userUpd.getName() != null) {
-            user.setName(userUpd.getName());
-        }
-        if (userUpd.getEmail() != null) {
-            isEmailExist(userUpd.getEmail());
-            user.setEmail(userUpd.getEmail());
-        }
-        userMap.put(userId, user);
-        log.info("update user - {}", user);
-        return user;
-    }
+    void delete(Long userId);
 
-    @Override
-    public void delete(Long userId) {
-        log.info("Delete user by id {}", userId);
-        userMap.remove(userId);
-    }
-
-    @Override
-    public void isEmailExist(String email) {
-        if (userMap.values().stream().filter(user -> user.getEmail().equals(email)).count() == 1) {
-            log.debug("Email {} is already exist", email);
-            throw new DuplicatedMailException("Email " + email + " is already exist");
-        }
-    }
+    void isEmailExist(String email);
 }

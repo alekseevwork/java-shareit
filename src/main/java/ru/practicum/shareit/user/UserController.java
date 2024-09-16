@@ -1,7 +1,7 @@
 package ru.practicum.shareit.user;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,11 +18,14 @@ import java.util.Collection;
 
 @Slf4j
 @RestController
-@RequiredArgsConstructor
 @RequestMapping(path = "/users")
 public class UserController {
 
     private final UserService userService;
+
+    public UserController(@Qualifier("userServiceDb") UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/{userId}")
     public UserDto getById(@PathVariable Long userId) {

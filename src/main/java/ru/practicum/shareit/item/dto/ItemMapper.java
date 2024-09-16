@@ -17,7 +17,14 @@ public class ItemMapper {
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
+                .owner(item.getOwner())
                 .build();
+    }
+
+    public static Collection<ItemDto> toDto(Collection<Item> items) {
+        return items.stream()
+                .map(ItemMapper::toDto)
+                .toList();
     }
 
     public static Item toItem(ItemDto itemDto) {
@@ -28,6 +35,7 @@ public class ItemMapper {
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
                 .available(itemDto.getAvailable())
+                .owner(itemDto.getOwner())
                 .build();
     }
 

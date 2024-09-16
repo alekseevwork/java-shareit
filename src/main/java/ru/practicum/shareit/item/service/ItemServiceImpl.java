@@ -2,20 +2,20 @@ package ru.practicum.shareit.item.service;
 
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.error.exeption.NotFoundException;
-import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.dto.ItemShortDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.repository.ItemRepositoryMemory;
 
 import java.util.Collection;
 
 @Service
 public class ItemServiceImpl implements ItemService {
 
-    private final ItemRepository itemRepository;
+    private final ItemRepositoryMemory itemRepository;
 
-    public ItemServiceImpl(ItemRepository itemRepository) {
+    public ItemServiceImpl(ItemRepositoryMemory itemRepository) {
         this.itemRepository = itemRepository;
     }
 
@@ -23,7 +23,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto getItemsById(Long itemId) {
         return itemRepository.getItemsById(itemId)
                 .map(ItemMapper::toDto)
-                .orElseThrow(() -> new NotFoundException("User by id: " + itemId + " not found"));
+                .orElseThrow(() -> new NotFoundException("Item by id: " + itemId + " not found"));
     }
 
     @Override
