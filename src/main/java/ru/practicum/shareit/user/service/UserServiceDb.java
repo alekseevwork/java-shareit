@@ -20,35 +20,32 @@ public class UserServiceDb implements UserService {
 
     @Override
     @Transactional
-    public UserDto create(UserDto userDto) {
-        User user = repository.save(UserMapper.toUser(userDto));
-        return UserMapper.toDto(user);
+    public User create(UserDto userDto) {
+        return repository.save(UserMapper.toUser(userDto));
     }
 
     @Override
-    public Collection<UserDto> findAll() {
-        return UserMapper.toDto(repository.findAll());
+    public Collection<User> findAll() {
+        return repository.findAll();
     }
 
     @Override
-    public UserDto findUserById(Long userId) {
+    public User findUserById(Long userId) {
         return repository.findById(userId)
-                .map(UserMapper::toDto)
                 .orElseThrow(() -> new NotFoundException("User by id: " + userId + " not found"));
     }
 
     @Override
     @Transactional
-    public UserDto update(UserDto userDto, Long userId) {
-        UserDto oldUser = findUserById(userId);
+    public User update(UserDto userDto, Long userId) {
+        User oldUser = findUserById(userId);
         if (userDto.getName() != null) {
             oldUser.setName(userDto.getName());
         }
         if (userDto.getEmail() != null) {
             oldUser.setEmail(userDto.getEmail());
         }
-        User user = repository.save(UserMapper.toUser(oldUser));
-        return UserMapper.toDto(user);
+        return repository.save(oldUser);
     }
 
     @Override
