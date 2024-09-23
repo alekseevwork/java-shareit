@@ -11,11 +11,11 @@ public interface BookingService {
 
     BookingDto create(Long userId, BookingNewDto dto);
 
-    BookingDto changeStatus(Long userId, Long booking_id, Boolean status);
+    BookingDto changeStatus(Long userId, Long bookingId, Boolean status);
 
     BookingDto getBookingById(Long userId, Long bookingId);
 
-    Collection<Booking> getAllBookingsByUserId(Long user_Id, String state);
+    Collection<Booking> getAllBookingsByUserId(Long userId, String state);
 
     Collection<Booking> getBookingsForAllItemsByUserId(Long userId, String state);
 
