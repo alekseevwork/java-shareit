@@ -1,7 +1,6 @@
 package ru.practicum.shareit.user;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +23,7 @@ public class UserController {
 
     private final UserService userService;
 
-    public UserController(@Qualifier("userServiceDb") UserService userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
