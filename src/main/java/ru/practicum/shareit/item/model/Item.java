@@ -27,22 +27,22 @@ public class Item {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+    private long id;
 
     @Column(nullable = false)
-    String name;
+    private String name;
 
     @Column(nullable = false)
-    String description;
+    private String description;
 
     @Column(name = "is_available", nullable = false)
-    Boolean available;
+    private Boolean available;
 
     @ManyToOne
     @ToString.Exclude
     @JoinColumn(name = "owner_id", nullable = false)
-    User owner;
+    private User owner;
 
     @Column(name = "request_id")
-    Long request;
+    private Long request;
 }

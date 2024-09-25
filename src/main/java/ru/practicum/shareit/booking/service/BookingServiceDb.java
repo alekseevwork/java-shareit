@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.StatusBooking;
-import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingNewDto;
 import ru.practicum.shareit.booking.model.Booking;
@@ -19,6 +18,7 @@ import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -38,7 +38,7 @@ public class BookingServiceDb implements BookingService {
 
     @Override
     @Transactional
-    public BookingDto create(Long userId, BookingNewDto dto) {
+    public Booking create(Long userId, BookingNewDto dto) {
         log.info("create Booking - {}", dto);
         if (dto.getItemId() == null) {
             throw new NotFoundException("Not item id.");
@@ -61,93 +61,99 @@ public class BookingServiceDb implements BookingService {
         booking.setBooker(user);
         booking.setStatus(StatusBooking.WAITING);
 
-        return BookingMapper.toBookingDto(repository.save(booking));
+        return repository.save(booking);
     }
 
     @Override
     @Transactional
-    public BookingDto changeStatus(Long userId, Long bookingId, Boolean status) {
+    public Booking changeStatus(Long userId, Long bookingId, Boolean status) {
         log.info("changeStatus Booking - {}", status);
-        Booking booking = repository.findById(bookingId)
+        Booking booking = repository.findByIdFetchItemAndFetchUser(bookingId)
                 .orElseThrow(() -> new NotFoundException("Booking by id: " + bookingId + " not found"));
         if (booking.getItem().getOwner().getId() == userId) {
-            changeStatusApprovedOrRejected(booking, status);
+            changeStatusApprovedOrRejected(booking, status, userId);
         } else {
             throw new ValidationException("User by id - " + userId + " not owner");
         }
-        return BookingMapper.toBookingDto(repository.save(booking));
+        return repository.save(booking);
     }
 
     @Override
-    public BookingDto getBookingById(Long userId, Long bookingId) {
+    public Booking getBookingById(Long userId, Long bookingId) {
         log.info("getBookingById - {}", bookingId);
-        Booking booking = repository.findById(bookingId)
+        Booking booking = repository.findByIdFetchItemAndFetchUser(bookingId)
                 .orElseThrow(() -> new NotFoundException("Booking by id: " + bookingId + " not found"));
         if (userId.equals(booking.getBooker().getId())
                 || userId.equals(booking.getItem().getOwner().getId())) {
-            return BookingMapper.toBookingDto(booking);
+            return booking;
         } else {
             throw new ValidationException("User by id - " + userId + " not owner");
         }
     }
 
     @Override
-    public Collection<Booking> getAllBookingsByUserId(Long userId, String state) {
+    public List<Booking> getAllBookingsByUserId(Long userId, String state) {
         log.info("getAllBookingsByUserId by state - {}", state);
         userService.findById(userId).orElseThrow(() -> new NotFoundException("User by id: " + userId + " not found"));
+        Collection<Booking> bookings;
         switch (state) {
             case "ALL" -> {
-                return repository.findAllBookingsByBookerIdOrderByStartDesc(userId);
+                bookings = repository.findAllByIdFetchItemAndFetchUser(userId);
             }
             case "CURRENT" -> {
-                return repository.findAllBookingByCurrentDate(userId, LocalDateTime.now());
+                bookings = repository.findAllBookingByCurrentDate(userId, LocalDateTime.now());
             }
             case "PAST" -> {
-                return repository.findAllByBookerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now());
+                bookings = repository.findAllByBookerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now());
             }
             case "FUTURE" -> {
-                return repository.findAllByBookerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now());
+                bookings = repository.findAllByBookerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now());
             }
             case "WAITING" -> {
-                return repository.findAllByBookerIdAndStatusOrderByStartDesc(userId, StatusBooking.WAITING);
+                bookings = repository.findAllByBookerIdAndStatusOrderByStartDesc(userId, StatusBooking.WAITING);
             }
             case "REJECTED" -> {
-                return repository.findAllByBookerIdAndStatusOrderByStartDesc(userId, StatusBooking.REJECTED);
+                bookings = repository.findAllByBookerIdAndStatusOrderByStartDesc(userId, StatusBooking.REJECTED);
             }
             default -> throw new ValidationException("status - " + state + " is not supported");
         }
+        return bookings.stream().toList();
     }
 
     @Override
-    public Collection<Booking> getBookingsForAllItemsByUserId(Long userId, String state) {
+    public List<Booking> getBookingsForAllItemsByUserId(Long userId, String state) {
         log.info("getBookingsAllItemsByUserId by state - {}", state);
         userService.findById(userId).orElseThrow(() -> new NotFoundException("User by id: " + userId + " not found"));
+        Collection<Booking> bookings;
         switch (state) {
             case "ALL" -> {
-                return repository.findAllByItemOwnerIdOrderByStartDesc(userId);
+                bookings = repository.findAllByItemOwnerIdOrderByStartDesc(userId);
             }
             case "CURRENT" -> {
-                return repository.findAllByBookingItemsCurrentDate(userId, LocalDateTime.now());
+                bookings = repository.findAllByBookingItemsCurrentDate(userId, LocalDateTime.now());
             }
             case "PAST" -> {
-                return repository.findAllByItemOwnerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now());
+                bookings = repository.findAllByItemOwnerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now());
             }
             case "FUTURE" -> {
-                return repository.findAllByItemOwnerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now());
+                bookings = repository.findAllByItemOwnerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now());
             }
             case "WAITING" -> {
-                return repository.findAllByItemOwnerIdAndStatusOrderByStartDesc(userId, StatusBooking.WAITING);
+                bookings = repository.findAllByItemOwnerIdAndStatusOrderByStartDesc(userId, StatusBooking.WAITING);
             }
             case "REJECTED" -> {
-                return repository.findAllByItemOwnerIdAndStatusOrderByStartDesc(userId, StatusBooking.REJECTED);
+                bookings = repository.findAllByItemOwnerIdAndStatusOrderByStartDesc(userId, StatusBooking.REJECTED);
             }
             default -> throw new ValidationException("status - " + state + " is not supported");
         }
+        return bookings.stream().toList();
     }
 
-    private void changeStatusApprovedOrRejected(Booking booking, Boolean state) {
+    private void changeStatusApprovedOrRejected(Booking booking, Boolean state, Long userId) {
         if (state) {
             booking.setStatus(StatusBooking.APPROVED);
+        } else if (userId.equals(booking.getBooker().getId())) {
+            booking.setStatus(StatusBooking.CANCELED);
         } else {
             booking.setStatus(StatusBooking.REJECTED);
         }

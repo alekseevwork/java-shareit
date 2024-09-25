@@ -16,19 +16,19 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ItemDto {
-    long id;
+    private long id;
     @NotBlank
-    String name;
+    private String name;
     @NotBlank
-    String description;
+    private String description;
     @NonNull
-    Boolean available;
+    private Boolean available;
 
-    User owner;
-    Long request;
+    private User owner;
+    private Long request;
 
-    Booking lastBooking;
-    Booking nextBooking;
+    private Booking lastBooking;
+    private Booking nextBooking;
 
-    List<CommentDto> comments;
+    private List<CommentDto> comments;
 }

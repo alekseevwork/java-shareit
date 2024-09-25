@@ -23,14 +23,14 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+    private long id;
 
     @NotBlank
     @Column(nullable = false)
-    String name;
+    private String name;
 
     @Email
     @NotBlank
     @Column(unique = true)
-    String email;
+    private String email;
 }

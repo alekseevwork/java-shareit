@@ -10,14 +10,14 @@ import java.util.List;
 @Data
 @Builder
 public class ItemShortDto {
-    long id;
+    private long id;
     @NotBlank
-    String name;
+    private String name;
     @NotBlank
-    String description;
+    private String description;
 
-    Booking lastBooking;
-    Booking nextBooking;
+    private Booking lastBooking;
+    private Booking nextBooking;
 
-    List<CommentDto> comments;
+    private List<CommentDto> comments;
 }

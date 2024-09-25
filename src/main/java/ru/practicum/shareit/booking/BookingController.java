@@ -32,7 +32,7 @@ public class BookingController {
     @PostMapping
     public BookingDto create(@RequestHeader("X-Sharer-User-Id") Long userId, @Validated @RequestBody BookingNewDto dto) {
         log.info("POST /bookings: create booking - {}, by user - {}", dto, userId);
-        return service.create(userId, dto);
+        return BookingMapper.toBookingDto(service.create(userId, dto));
     }
 
     @PatchMapping("/{bookingId}")
@@ -41,13 +41,13 @@ public class BookingController {
                                    @RequestParam Boolean approved) {
         log.info("PATCH bookings/id?approved: changeStatus by id - {},approved - {}, by user - {}",
                 bookingId, approved, userId);
-        return service.changeStatus(userId, bookingId, approved);
+        return BookingMapper.toBookingDto(service.changeStatus(userId, bookingId, approved));
     }
 
     @GetMapping("/{bookingId}")
     public BookingDto getBookingById(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long bookingId) {
         log.info("GET bookings/id: getBookingById - {}, by userId - {}", bookingId, userId);
-        return service.getBookingById(userId, bookingId);
+        return BookingMapper.toBookingDto(service.getBookingById(userId, bookingId));
     }
 
     @GetMapping
