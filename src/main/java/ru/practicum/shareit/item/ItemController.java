@@ -19,7 +19,6 @@ import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.dto.ItemShortDto;
 import ru.practicum.shareit.item.service.ItemService;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Slf4j
@@ -36,28 +35,27 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItemsById(@PathVariable Long itemId) {
-        log.info("GET /items/itemId: getItemsById - {}", itemId);
-        System.out.println(LocalDateTime.now());
-        return ItemMapper.toDto(itemService.getItemsById(itemId), bookingService, itemService);
+    public ItemDto getItemsById(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId) {
+        log.info("GET /items/itemId: getItemsById - {}, user id - {}", itemId, userId);
+        return ItemMapper.toDto(itemService.getItemsById(itemId), bookingService, itemService, userId);
     }
 
     @GetMapping
     public Collection<ItemShortDto> getItemsByUserId(@RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("GET /items: getItemsByUserId by user id - {}", userId);
-        return ItemMapper.toShortDto(itemService.getItemsByUserId(userId), bookingService, itemService);
+        return ItemMapper.toShortDto(itemService.getItemsByUserId(userId), bookingService, itemService, userId);
     }
 
     @GetMapping("/search")
-    public Collection<ItemDto> getItemsByText(@RequestParam String text) {
+    public Collection<ItemDto> getItemsByText(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam String text) {
         log.info("GET /items/search: getItemsByText - {}", text);
-        return ItemMapper.toDto(itemService.getItemsByText(text), bookingService, itemService);
+        return ItemMapper.toDto(itemService.getItemsByText(text), bookingService, itemService, userId);
     }
 
     @PostMapping
     public ItemDto create(@RequestHeader("X-Sharer-User-Id") Long userId, @Validated @RequestBody ItemDto item) {
         log.info("POST /items: create items {} - where owner {}", item, userId);
-        return ItemMapper.toDto(itemService.create(userId, item), bookingService, itemService);
+        return ItemMapper.toDto(itemService.create(userId, item), bookingService, itemService, userId);
     }
 
     @PatchMapping("/{itemId}")
@@ -66,7 +64,7 @@ public class ItemController {
             @PathVariable Long itemId,
             @RequestBody ItemDto item) {
         log.info("PATCH /items/id: update item by id - {}, by owner id - {}", itemId, userId);
-        return ItemMapper.toDto(itemService.update(userId, itemId, item), bookingService, itemService);
+        return ItemMapper.toDto(itemService.update(userId, itemId, item), bookingService, itemService, userId);
     }
 
     @PostMapping("{itemId}/comment")

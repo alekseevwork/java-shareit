@@ -26,16 +26,17 @@ import java.util.List;
 @Slf4j
 @Service
 @Transactional(readOnly = true)
-public class ItemServiceDb implements ItemService {
+public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository repository;
     private final UserService userService;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
 
-    public ItemServiceDb(ItemRepository repository,
-                         UserService userService,
-                         BookingRepository bookingRepository, CommentRepository commentRepository) {
+    public ItemServiceImpl(ItemRepository repository,
+                           UserService userService,
+                           BookingRepository bookingRepository,
+                           CommentRepository commentRepository) {
         this.repository = repository;
         this.userService = userService;
         this.bookingRepository = bookingRepository;
@@ -44,7 +45,7 @@ public class ItemServiceDb implements ItemService {
 
     @Override
     public Item getItemsById(Long itemId) {
-        return repository.findById(itemId)
+        return repository.findItemWithOwnerById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item by id: " + itemId + " not found"));
     }
 

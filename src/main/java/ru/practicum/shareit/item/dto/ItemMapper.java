@@ -10,7 +10,7 @@ import java.util.Collection;
 @UtilityClass
 public class ItemMapper {
 
-    public static ItemDto toDto(Item item, BookingService bookingService, ItemService itemService) {
+    public static ItemDto toDto(Item item, BookingService bookingService, ItemService itemService, Long userId) {
         if (item == null) {
             return null;
         }
@@ -20,15 +20,16 @@ public class ItemMapper {
                 .description(item.getDescription())
                 .available(item.getAvailable())
                 .owner(item.getOwner())
-                .lastBooking(bookingService.findLastBooking(item))
-                .nextBooking(bookingService.findNextBooking(item))
+                .lastBooking(bookingService.findLastBooking(userId))
+                .nextBooking(bookingService.findNextBooking(userId))
                 .comments(itemService.getComments(item))
                 .build();
     }
 
-    public static Collection<ItemDto> toDto(Collection<Item> items, BookingService bookingService, ItemService itemService) {
+    public static Collection<ItemDto> toDto(Collection<Item> items, BookingService bookingService,
+                                            ItemService itemService, Long userId) {
         return items.stream()
-                .map(item -> ItemMapper.toDto(item, bookingService, itemService))
+                .map(item -> ItemMapper.toDto(item, bookingService, itemService, userId))
                 .toList();
     }
 
@@ -45,7 +46,8 @@ public class ItemMapper {
                 .build();
     }
 
-    public static ItemShortDto toShortDto(Item item, BookingService bookingService, ItemService itemService) {
+    public static ItemShortDto toShortDto(Item item, BookingService bookingService,
+                                          ItemService itemService, Long userId) {
         if (item == null) {
             return null;
         }
@@ -53,15 +55,16 @@ public class ItemMapper {
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
-                .lastBooking(bookingService.findLastBooking(item))
-                .nextBooking(bookingService.findNextBooking(item))
+                .lastBooking(bookingService.findLastBooking(userId))
+                .nextBooking(bookingService.findNextBooking(userId))
                 .comments(itemService.getComments(item))
                 .build();
     }
 
-    public static Collection<ItemShortDto> toShortDto(Collection<Item> items, BookingService bookingService, ItemService itemService) {
+    public static Collection<ItemShortDto> toShortDto(Collection<Item> items, BookingService bookingService,
+                                                      ItemService itemService, Long userId) {
         return items.stream()
-                .map(item -> ItemMapper.toShortDto(item, bookingService, itemService))
+                .map(item -> ItemMapper.toShortDto(item, bookingService, itemService, userId))
                 .toList();
     }
 }

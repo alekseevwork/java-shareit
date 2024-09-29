@@ -14,7 +14,7 @@ import java.util.Collection;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class UserServiceDb implements UserService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
 

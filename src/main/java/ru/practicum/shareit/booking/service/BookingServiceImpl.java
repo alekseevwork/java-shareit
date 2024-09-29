@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.StatusBooking;
@@ -17,20 +16,18 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 
 @Slf4j
 @Service
 @Transactional(readOnly = true)
-public class BookingServiceDb implements BookingService {
+public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository repository;
     private final UserRepository userService;
     private final ItemRepository itemService;
 
-    @Autowired
-    public BookingServiceDb(BookingRepository repository, UserRepository userService, ItemRepository itemService) {
+    public BookingServiceImpl(BookingRepository repository, UserRepository userService, ItemRepository itemService) {
         this.repository = repository;
         this.userService = userService;
         this.itemService = itemService;
@@ -45,7 +42,7 @@ public class BookingServiceDb implements BookingService {
         }
         User user = userService.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User by id: " + userId + " not found"));
-        Item item = itemService.findById(dto.getItemId())
+        Item item = itemService.findItemWithOwnerById(dto.getItemId())
                 .orElseThrow(() -> new NotFoundException("Item by id: " + dto.getItemId() + " not found"));
 
         if (!item.getAvailable()) {
@@ -95,7 +92,7 @@ public class BookingServiceDb implements BookingService {
     public List<Booking> getAllBookingsByUserId(Long userId, String state) {
         log.info("getAllBookingsByUserId by state - {}", state);
         userService.findById(userId).orElseThrow(() -> new NotFoundException("User by id: " + userId + " not found"));
-        Collection<Booking> bookings;
+        List<Booking> bookings;
         switch (state) {
             case "ALL" -> {
                 bookings = repository.findAllByIdFetchItemAndFetchUser(userId);
@@ -117,14 +114,14 @@ public class BookingServiceDb implements BookingService {
             }
             default -> throw new ValidationException("status - " + state + " is not supported");
         }
-        return bookings.stream().toList();
+        return bookings;
     }
 
     @Override
     public List<Booking> getBookingsForAllItemsByUserId(Long userId, String state) {
         log.info("getBookingsAllItemsByUserId by state - {}", state);
         userService.findById(userId).orElseThrow(() -> new NotFoundException("User by id: " + userId + " not found"));
-        Collection<Booking> bookings;
+        List<Booking> bookings;
         switch (state) {
             case "ALL" -> {
                 bookings = repository.findAllByItemOwnerIdOrderByStartDesc(userId);
@@ -146,7 +143,7 @@ public class BookingServiceDb implements BookingService {
             }
             default -> throw new ValidationException("status - " + state + " is not supported");
         }
-        return bookings.stream().toList();
+        return bookings;
     }
 
     private void changeStatusApprovedOrRejected(Booking booking, Boolean state, Long userId) {
@@ -160,16 +157,16 @@ public class BookingServiceDb implements BookingService {
     }
 
     @Override
-    public Booking findLastBooking(Item item) {
+    public Booking findLastBooking(Long userId) {
         return repository
-                .findFirstByItemIdAndEndBeforeOrderByStartDesc(item.getId(), LocalDateTime.now().minusSeconds(5))
+                .findFirstByItemOwnerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now())
                 .orElse(null);
     }
 
     @Override
-    public Booking findNextBooking(Item item) {
+    public Booking findNextBooking(Long userId) {
         return repository
-                .findFirstByItemIdAndStartAfterOrderByStart(item.getId(), LocalDateTime.now())
+                .findFirstByItemOwnerIdAndStartAfterOrderByStart(userId, LocalDateTime.now())
                 .orElse(null);
     }
 }
