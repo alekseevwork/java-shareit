@@ -3,12 +3,21 @@ package ru.practicum.shareit.item.dto;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
+import ru.practicum.shareit.booking.model.Booking;
+
+import java.util.List;
 
 @Data
 @Builder
 public class ItemShortDto {
+    private long id;
     @NotBlank
-    String name;
+    private String name;
     @NotBlank
-    String description;
+    private String description;
+
+    private Booking lastBooking;
+    private Booking nextBooking;
+
+    private List<CommentDto> comments;
 }

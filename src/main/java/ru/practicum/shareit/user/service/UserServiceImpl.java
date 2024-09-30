@@ -1,47 +1,56 @@
 package ru.practicum.shareit.user.service;
 
-import org.springframework.beans.factory.annotation.Qualifier;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.error.exeption.NotFoundException;
-import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.Collection;
 
 @Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
-    UserRepository repository;
+    private final UserRepository repository;
 
-    public UserServiceImpl(@Qualifier("userRepositoryMemory") UserRepository repository) {
-        this.repository = repository;
+    @Override
+    @Transactional
+    public User create(UserDto userDto) {
+        return repository.save(UserMapper.toUser(userDto));
     }
 
-    public UserDto create(UserDto user) {
-        User newUser = UserMapper.toUser(user);
-        return UserMapper.toDto(repository.create(newUser));
+    @Override
+    public Collection<User> findAll() {
+        return repository.findAll();
     }
 
-    public Collection<UserDto> findAll() {
-        return repository.findAll().stream()
-                .map(UserMapper::toDto)
-                .toList();
-    }
-
-    public UserDto findUserById(Long userId) {
-        return repository.findUserById(userId)
-                .map(UserMapper::toDto)
+    @Override
+    public User findUserById(Long userId) {
+        return repository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User by id: " + userId + " not found"));
     }
 
-    public UserDto update(UserDto user, Long userId) {
-        User updUser = UserMapper.toUser(user);
-        return UserMapper.toDto(repository.update(updUser, userId));
+    @Override
+    @Transactional
+    public User update(UserDto userDto, Long userId) {
+        User oldUser = findUserById(userId);
+        if (userDto.getName() != null) {
+            oldUser.setName(userDto.getName());
+        }
+        if (userDto.getEmail() != null) {
+            oldUser.setEmail(userDto.getEmail());
+        }
+        return repository.save(oldUser);
     }
 
+    @Override
+    @Transactional
     public void delete(Long userId) {
-        repository.delete(userId);
+        repository.deleteById(userId);
     }
 }
