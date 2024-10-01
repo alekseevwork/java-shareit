@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
@@ -18,4 +19,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             "WHERE (i.name || i.description) ILIKE %:text% " +
             "AND i.available")
     Collection<Item> findAllByNamePattern(String text);
+
+    List<Item> findAllByRequestId(Long requestId);
 }
