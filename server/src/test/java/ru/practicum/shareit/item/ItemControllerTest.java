@@ -5,26 +5,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.error.exeption.NotFoundException;
 import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemShortDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserController;
 
 import java.util.List;
 
@@ -112,7 +107,8 @@ class ItemControllerTest {
                 .andReturn();
 
         List<ItemShortDto> actualDtos = objectMapper
-                .readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
+                .readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+                });
         assertEquals(2, actualDtos.size());
     }
 
@@ -128,7 +124,8 @@ class ItemControllerTest {
                 .andReturn();
 
         List<ItemDto> actualDtos = objectMapper
-                .readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
+                .readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+                });
         assertEquals(2, actualDtos.size());
     }
 

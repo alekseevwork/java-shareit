@@ -45,9 +45,9 @@ class UserServiceImplTest {
 
         when(repository.save(any(User.class))).thenReturn(user);
 
-        User createdUser  = userService.create(userDto);
+        User createdUser = userService.create(userDto);
 
-        assertEquals(user, createdUser );
+        assertEquals(user, createdUser);
     }
 
     @Test
@@ -74,9 +74,9 @@ class UserServiceImplTest {
 
         when(repository.findById(1L)).thenReturn(Optional.of(user));
 
-        User foundUser  = userService.findUserById(1L);
+        User foundUser = userService.findUserById(1L);
 
-        assertEquals(user, foundUser );
+        assertEquals(user, foundUser);
     }
 
     @Test
@@ -93,24 +93,24 @@ class UserServiceImplTest {
                 .email("newemail@email.com")
                 .build();
 
-        User oldUser  = User.builder()
+        User oldUser = User.builder()
                 .id(1L)
                 .name("Old Name")
                 .email("oldemail@email.com")
                 .build();
 
-        User updatedUser  = User.builder()
+        User updatedUser = User.builder()
                 .id(1L)
                 .name("New Name")
                 .email("newemail@email.com")
                 .build();
 
-        when(repository.findById(1L)).thenReturn(Optional.of(oldUser ));
-        when(repository.save(any(User.class))).thenReturn(updatedUser );
+        when(repository.findById(1L)).thenReturn(Optional.of(oldUser));
+        when(repository.save(any(User.class))).thenReturn(updatedUser);
 
         User user = userService.update(userDto, 1L);
 
-        assertEquals(updatedUser , user);
+        assertEquals(updatedUser, user);
     }
 
     @Test

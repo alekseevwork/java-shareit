@@ -35,7 +35,6 @@ class BookingRepositoryTest {
     private Booking booking2;
     private User user;
     private Item item;
-    private LocalDateTime dateTime;
 
     @BeforeEach
     void before() {
@@ -43,7 +42,7 @@ class BookingRepositoryTest {
         userRepository.deleteAll();
         itemRepository.deleteAll();
 
-        dateTime = LocalDateTime.now();
+        LocalDateTime dateTime = LocalDateTime.now();
         user = userRepository.save(new User(1L, "User", "user@example.com"));
         item = itemRepository.save(Item.builder()
                 .id(1L)

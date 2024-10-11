@@ -82,9 +82,9 @@ class BookingControllerTest {
         when(bookingService.create(1L, newDto)).thenReturn(booking);
 
         String result = mockMvc.perform(post("/bookings")
-                .header("X-Sharer-User-Id", 1L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(newDto)))
+                        .header("X-Sharer-User-Id", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newDto)))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
@@ -102,9 +102,9 @@ class BookingControllerTest {
         when(bookingService.changeStatus(1L, 1L, true)).thenReturn(booking);
 
         String result = mockMvc.perform(patch("/bookings/{bookingId}", 1L)
-                .header("X-Sharer-User-Id", 1L)
-                .param("approved", "true")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("X-Sharer-User-Id", 1L)
+                        .param("approved", "true")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
@@ -158,7 +158,8 @@ class BookingControllerTest {
                 .andReturn();
 
         List<Booking> actualBookings = objectMapper
-                .readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
+                .readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+                });
         assertEquals(2, actualBookings.size());
         assertEquals(booking.getItem(), actualBookings.stream().findFirst().get().getItem());
         assertEquals(booking2.getItem(), actualBookings.stream().skip(1).findFirst().get().getItem());
@@ -186,7 +187,8 @@ class BookingControllerTest {
                 .andReturn();
 
         List<Booking> actualBookings = objectMapper
-                .readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
+                .readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+                });
         assertEquals(2, actualBookings.size());
         assertEquals(booking.getItem(), actualBookings.stream().findFirst().get().getItem());
         assertEquals(booking2.getItem(), actualBookings.stream().skip(1).findFirst().get().getItem());
