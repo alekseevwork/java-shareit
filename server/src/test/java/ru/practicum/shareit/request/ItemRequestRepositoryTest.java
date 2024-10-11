@@ -68,10 +68,9 @@ class ItemRequestRepositoryTest {
 
     @Test
     void findAllByRequestorIdNotOrderByCreatedDesc_whenInvoked_thenReturnRequests() {
-        List<ItemRequest> itemRequests = itemRequestRepository.findAllByRequestorIdNotOrderByCreatedDesc(31L);
-        assertEquals(2, itemRequests.size());
-        assertEquals(itemRequest1, itemRequests.get(0));
-        assertEquals(itemRequest2, itemRequests.get(1));
+        List<ItemRequest> itemRequests = itemRequestRepository.findAllByRequestorIdNotOrderByCreatedDesc(user1.getId());
+        assertEquals(1, itemRequests.size());
+        assertEquals(itemRequest2, itemRequests.get(0));
     }
 
     @Test
