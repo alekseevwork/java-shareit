@@ -1,14 +1,13 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.StatusBooking;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingNewDto;
-import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.error.exeption.NotFoundException;
 import ru.practicum.shareit.error.exeption.ValidationException;
 import ru.practicum.shareit.item.model.Item;
