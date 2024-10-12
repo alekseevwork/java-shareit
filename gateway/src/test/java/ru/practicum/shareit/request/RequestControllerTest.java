@@ -18,6 +18,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -93,7 +94,8 @@ class RequestControllerTest {
 
     @Test
     void getAllItemRequestExceptUserId_whenUserIdValid_thenStatusOkAndReturnListEmpty() throws Exception {
-        when(requestClient.getRequestsExceptUserId(anyLong())).thenReturn(ResponseEntity.ok(List.of()));
+        when(requestClient.getRequestsExceptUserId(anyLong(), anyInt(), anyInt()))
+                .thenReturn(ResponseEntity.ok(List.of()));
 
         MvcResult result = mockMvc.perform(get("/requests/all")
                         .header("X-Sharer-User-Id", "1"))
@@ -103,6 +105,36 @@ class RequestControllerTest {
 
         String responseBody = result.getResponse().getContentAsString();
         assertEquals("[]", responseBody);
+    }
+
+    @Test
+    void getAllItemRequestExceptUserId_whenSizeNegative_thenStatusBadRequest() throws Exception {
+        when(requestClient.getRequestsExceptUserId(anyLong(), anyInt(), anyInt()))
+                .thenReturn(ResponseEntity.badRequest().build());
+
+        mockMvc.perform(get("/requests/all")
+                        .header("X-Sharer-User-Id", "1")
+                        .param("size", "-1")
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        verify(requestClient, never()).getRequestsExceptUserId(1L, 0, -1);
+    }
+
+    @Test
+    void getAllItemRequestExceptUserId_whenFromNegative_thenStatusBadRequest() throws Exception {
+        when(requestClient.getRequestsExceptUserId(anyLong(), anyInt(), anyInt()))
+                .thenReturn(ResponseEntity.badRequest().build());
+
+        mockMvc.perform(get("/requests/all")
+                        .header("X-Sharer-User-Id", "1")
+                        .param("from", "-1")
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        verify(requestClient, never()).getRequestsExceptUserId(1L, -1, 10);
     }
 
     @Test

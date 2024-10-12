@@ -3,6 +3,7 @@ package ru.practicum.shareit.request.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.error.exeption.NotFoundException;
@@ -15,6 +16,7 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestMapper;
 import ru.practicum.shareit.user.service.UserService;
 
+import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -50,8 +52,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public List<ItemRequestAnswerDto> getAllItemRequestExceptUserId(Long userId) {
-        List<ItemRequest> itemRequests = requestRepository.findAllByRequestorIdNotOrderByCreatedDesc(userId);
+    public List<ItemRequestAnswerDto> getAllItemRequestExceptUserId(Long userId, int from, int size) {
+        List<ItemRequest> itemRequests = requestRepository
+                .findAllByRequestorIdNotOrderByCreatedDesc(userId, PageRequest.of(from, size));
 
         return itemRequests.stream()
                 .map(itemRequest -> ItemRequestMapper.toAnswerDto(

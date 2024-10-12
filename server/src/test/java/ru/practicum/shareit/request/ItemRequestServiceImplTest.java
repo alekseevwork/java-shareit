@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.practicum.shareit.error.exeption.NotFoundException;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -114,9 +115,12 @@ class ItemRequestServiceImplTest {
                         .id(2L)
                         .description("description")
                         .build());
-        when(requestRepository.findAllByRequestorIdNotOrderByCreatedDesc(1L)).thenReturn(itemRequests);
+        when(requestRepository
+                .findAllByRequestorIdNotOrderByCreatedDesc(1L, PageRequest.of(0, 5)))
+                .thenReturn(itemRequests);
 
-        List<ItemRequestAnswerDto> actualDtos = itemRequestService.getAllItemRequestExceptUserId(1L);
+        List<ItemRequestAnswerDto> actualDtos = itemRequestService
+                .getAllItemRequestExceptUserId(1L, 0, 5);
 
         assertEquals(2, actualDtos.size());
     }

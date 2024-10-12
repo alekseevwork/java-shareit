@@ -11,7 +11,7 @@ public interface ItemRequestService {
 
     List<ItemRequestAnswerDto> getAllItemRequestByUserId(Long userId);
 
-    List<ItemRequestAnswerDto> getAllItemRequestExceptUserId(Long userId);
+    List<ItemRequestAnswerDto> getAllItemRequestExceptUserId(Long userId, int from, int size);
 
     ItemRequestAnswerDto getById(Long itemRequestId);
 }

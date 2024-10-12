@@ -16,6 +16,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -100,10 +102,37 @@ class ItemRequestControllerTest {
                         .build()
         );
 
-        when(itemRequestService.getAllItemRequestExceptUserId(1L)).thenReturn(expectedDtos);
+        when(itemRequestService.getAllItemRequestExceptUserId(anyLong(), anyInt(), anyInt()))
+                .thenReturn(expectedDtos);
 
         String result = mockMvc.perform(get("/requests/all")
-                        .header("X-Sharer-User-Id", 1L))
+                        .header("X-Sharer-User-Id", 1L)
+                )
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertEquals(result, objectMapper.writeValueAsString(expectedDtos));
+    }
+
+    @SneakyThrows
+    @Test
+    void getAllItemRequestExceptUserId_whenSizeIsOne_thenResponseStatusOkAndListItemRequestAnswerDto() {
+        List<ItemRequestAnswerDto> expectedDtos = List.of(
+                ItemRequestAnswerDto.builder()
+                        .id(1L)
+                        .description("description")
+                        .build()
+        );
+
+        when(itemRequestService.getAllItemRequestExceptUserId(anyLong(), anyInt(), anyInt()))
+                .thenReturn(expectedDtos);
+
+        String result = mockMvc.perform(get("/requests/all")
+                        .header("X-Sharer-User-Id", 1L)
+                        .param("size", "1")
+                )
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()

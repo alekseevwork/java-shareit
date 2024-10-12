@@ -1,6 +1,8 @@
 package ru.practicum.shareit.request;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.practicum.shareit.request.dto.RequestDto;
 
 @Slf4j
@@ -37,9 +40,12 @@ public class RequestController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Object> getAllItemRequestExceptUserId(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ResponseEntity<Object> getAllItemRequestExceptUserId(
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
+            @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
         log.info("GET /requests/all: getAllButUserId by user id - {}", userId);
-        return requestClient.getRequestsExceptUserId(userId);
+        return requestClient.getRequestsExceptUserId(userId, from, size);
     }
 
     @GetMapping("/{requestId}")

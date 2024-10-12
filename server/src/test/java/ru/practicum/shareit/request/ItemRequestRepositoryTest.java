@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.PageRequest;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
@@ -68,7 +69,8 @@ class ItemRequestRepositoryTest {
 
     @Test
     void findAllByRequestorIdNotOrderByCreatedDesc_whenInvoked_thenReturnRequests() {
-        List<ItemRequest> itemRequests = itemRequestRepository.findAllByRequestorIdNotOrderByCreatedDesc(user1.getId());
+        List<ItemRequest> itemRequests = itemRequestRepository
+                .findAllByRequestorIdNotOrderByCreatedDesc(user1.getId(), PageRequest.of(0, 2));
         assertEquals(1, itemRequests.size());
         assertEquals(itemRequest2, itemRequests.get(0));
     }
