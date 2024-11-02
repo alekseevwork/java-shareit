@@ -37,13 +37,17 @@ public class ItemMapper {
         if (itemDto == null) {
             return null;
         }
-        return Item.builder()
+        Item item = Item.builder()
                 .id(itemDto.getId())
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
                 .available(itemDto.getAvailable())
                 .owner(itemDto.getOwner())
                 .build();
+        if (itemDto.getRequestId() != null) {
+            item.setRequestId(itemDto.getRequestId());
+        }
+        return item;
     }
 
     public static ItemShortDto toShortDto(Item item, BookingService bookingService,
@@ -66,5 +70,16 @@ public class ItemMapper {
         return items.stream()
                 .map(item -> ItemMapper.toShortDto(item, bookingService, itemService, userId))
                 .toList();
+    }
+
+    public static ItemFromItemRequestDto fromItemRequestDto(Item item) {
+        if (item == null) {
+            return null;
+        }
+        return ItemFromItemRequestDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .ownerId(item.getOwner().getId())
+                .build();
     }
 }
